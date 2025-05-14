@@ -1,19 +1,26 @@
+# -----CONFIG-----
 CXX = g++
 CFLAGS = -std=c++11 -Wall -g
+LDFLAGS += -ledit
 
-TARGET = myfirstdb
-SRCS = repl.cpp main.cpp
-OBJS = repl.o main.o
+SRCDIRS = src
 
-all: $(TARGET)
+#-----SOURCE AND OBJECT DISCOVER-----
+SRC := $(shell find $(SRCDIRS) -name '*.cpp')
+OBJ := $(SRC:.cpp=.o)
+DEPS := $(OBJ:.o=.d)
 
-$(TARGET): $(OBJS)
-	$(CXX) -o $(TARGET) $(OBJS) 
-	@echo "Linking complete: myfirstdb created."
+#-----TOP LEVEL TARGETS-----
+.PHONY: all clean
+
+fdb: $(OBJ)
+	$(CXX) $(OBJ) $(LDFLAGS) -o $@
 
 %.o: %.cpp
-	$(CXX) $(CFLAGS) -c $< -o $@
-	@echo "Compiled $< into $@."
+	$(CXX) $(CFLAGS) -MMD -MP -c $< -o $@
+
+-include $(DEPS)
 
 clean:
-	rm -f $(OBJS)
+	$(RM) $(OBJS) $(DEPS) fdb
+

@@ -1,6 +1,6 @@
 #include <iostream>
+#include "repl/repl.hpp"
 
-void run_repl();
 
 int main(){
     std::cout << "hey.." << std::endl;
